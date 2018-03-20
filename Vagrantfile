@@ -28,6 +28,7 @@ Vagrant.configure("2") do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
   # via 127.0.0.1 to disable public access
+  #config.vm.network "forwarded_port", guest: 22, host: 2202, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 9000, host: 9000, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 50070, host: 50070, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 50075, host: 50075, host_ip: "127.0.0.1"
@@ -116,6 +117,7 @@ Vagrant.configure("2") do |config|
 
     pip3 install --upgrade pip
     pip3 install mrjob
+    pip3 install mr3px
     SHELL
   end
 
@@ -175,6 +177,11 @@ Vagrant.configure("2") do |config|
     
     echo "\nHIVE_HOME=/usr/local/hive" >> /etc/environment
     source /etc/environment
+
+    cp $HIVE_HOME/conf/hive-env.sh.template $HIVE_HOME/conf/hive-env.sh
+    cp $HIVE_HOME/conf/hive-default.xml.template $HIVE_HOME/conf/hive-site.xml
+
+    echo "\nexport HADOOP_HOME=$HADOOP_HOME" >> $HIVE_HOME/conf/hive-env.sh
 
     SHELL
   end 

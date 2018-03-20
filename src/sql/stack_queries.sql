@@ -22,3 +22,17 @@ where posts.ViewCount BETWEEN 60000 AND 150000;
 select *
 from posts 
 where posts.ViewCount > 150000;
+
+
+--RECONCILIATION
+--number of users on stack exhange with hadoop in the title or body
+SELECT COUNT(DISTINCT OwnerUserId)
+FROM posts 
+WHERE posts.ViewCount > 24000
+AND(Title LIKE '%hadoop%'OR Body LIKE '%hadoop%');
+
+--number of records in source tables with NULL OwnerUserId
+SELECT COUNT(*)
+FROM posts 
+WHERE posts.ViewCount > 24000
+AND OwnerUserId IS NULL

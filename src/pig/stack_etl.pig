@@ -1,8 +1,8 @@
 --Register the piggybank jar
 REGISTER /usr/local/pig/contrib/piggybank/java/piggybank.jar
-define CSVExcelStorage org.apache.pig.piggybank.storage.CSVExcelStorage();  
 
-A = LOAD '/pig/query_test.csv' using CSVExcelStorage(',', 'YES_MULTILINE', 'WINDOWS', 'SKIP_INPUT_HEADER')
+records = LOAD '/pig/*.csv' 
+USING org.apache.pig.piggybank.storage.CSVExcelStorage(',', 'YES_MULTILINE', 'UNIX', 'SKIP_INPUT_HEADER')
 AS 
 (
  Id:int
@@ -29,6 +29,11 @@ AS
 ,CommunityOwnedDate:chararray
 );
 
-B = FILTER A BY (ViewCount == 2220431);
+distinct_records = DISTINCT records;
 
-DUMP B;
+final = FOREACH distinct_records GENERATE OwnerUserId, Id, Score, Title, REPLACE(REPLACE(Body, '<.*?.>', ''), '\n', ' ') AS Body;
+test = FILTER final BY OwnerUserId == 3106062;
+
+rmf /pig/output;
+STORE final INTO '/pig/output/posts' USING PigStorage('\u0001');
+STORE test INTO '/pig/output/json' USING JsonStorage();
